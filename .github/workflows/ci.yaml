@@ -1,0 +1,99 @@
+name: Lint checks
+
+on: # yamllint disable-line rule:truthy
+  pull_request: {}
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Run tests
+        run: |
+          make test
+
+  go-tidy:
+    name: Tidy go mod
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Ensure go.mod is tidy
+        env:
+          SHA_FILE: ${{ runner.temp }}/go_mod_shas.txt"
+        run: |
+          # generate sha512 for go mod files
+          sha512sum go.mod go.sum > "${SHA_FILE}"
+
+          # run go mod tidy
+          go mod tidy -v
+
+          # check files were left untouched
+          sha512sum -c "${SHA_FILE}"
+          if [ "$?" != 0 ]; then
+            printf "please run go mod tidy to tidy the go.mod\n\n%s\n" "${output}"
+            exit 1
+          fi
+
+  lint-go:
+    name: Lint code
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Git Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: hack/tools/golang-ci/go.mod
+
+      - name: Determine golang-ci version
+        id: golangci_version
+        run: |
+          echo "version=$(go mod edit -json hack/tools/golang-ci/go.mod | \
+            jq -r '.Require | map(select(.Path == "github.com/golangci/golangci-lint"))[].Version')" \
+            >> $GITHUB_OUTPUT
+
+      - name: Lint with golang-ci
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: ${{ steps.golangci_version.outputs.version }}
+          args: --timeout=5m
+
+  lint-yaml:
+    name: Lint yaml manifests
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Install yamllint
+        run: |
+          pip install yamllint
+
+      - name: Checkout Git Repository
+        uses: actions/checkout@v4
+
+      - name: Lint with yamllint
+        run: make lint-yaml
