@@ -20,3 +20,14 @@ test:
 
 test-coverage:
 	$(GO) test -covermode=atomic -coverprofile=cover.out ./...
+
+lint-yaml:
+	@yamllint ./
+
+lint-go:
+	@$(GO) run \
+		-modfile $(shell realpath ./hack/tools/golang-ci/go.mod) \
+		github.com/golangci/golangci-lint/v2/cmd/golangci-lint \
+		run
+
+lint: lint-go lint-yaml
