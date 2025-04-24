@@ -65,7 +65,7 @@ func (s *State) WriteConfig(ctx context.Context, allow bool) error {
 
 func (s *State) ReadConfig(ctx context.Context) (bool, error) {
 	configMap := v1.ConfigMap{}
-	err := s.Client.Get(ctx, s.ref, &configMap)
+	err := s.Get(ctx, s.ref, &configMap)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// if no state is found, assume we're serving requests

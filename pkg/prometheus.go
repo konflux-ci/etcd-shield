@@ -44,6 +44,9 @@ func NewPrometheus(address string, cfg config.HTTPClientConfig) (PromQuery, erro
 		Address: address,
 		Client:  httpClient,
 	})
+	if err != nil {
+		return nil, err
+	}
 	api := v1.NewAPI(client)
 	return &Prometheus{prometheus: api}, nil
 }

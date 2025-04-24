@@ -53,6 +53,6 @@ func (d *Duration) UnmarshalJSON(b []byte) error {
 		d.Duration = duration
 		return nil
 	default:
-		return fmt.Errorf("Invalid duration")
+		return fmt.Errorf("invalid duration")
 	}
 }

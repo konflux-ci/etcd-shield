@@ -28,6 +28,7 @@ import (
 	tektonv1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
@@ -61,7 +62,10 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 
 	querier := shield.NewQuerier(prom, state, *cfg)
 
-	manager.Add(querier)
+	err = manager.Add(querier)
+	if err != nil {
+		return fmt.Errorf("failed to register prometheus querier: %s", err)
+	}
 
 	err = ctrl.NewWebhookManagedBy(manager).
 		For(&tektonv1.PipelineRun{}).
@@ -80,7 +84,7 @@ func loadTLSCert(l *logr.Logger, certPath, keyPath string) func(*tls.Config) {
 		cert, err := tls.LoadX509KeyPair(certPath, keyPath)
 		if err != nil {
 			l.Error(err, "Unable to load TLS certificates")
-			return nil, fmt.Errorf("Unable to load TLS certificates: %w", err)
+			return nil, fmt.Errorf("unable to load TLS certificates: %w", err)
 		}
 
 		return &cert, err
@@ -106,8 +110,8 @@ func main() {
 	flag.StringVar(&configPath, "config", "/etc/etcd-shield/config.yaml", "Location of etcd-shield config")
 
 	scheme := runtime.NewScheme()
-	clientgoscheme.AddToScheme(scheme)
-	tektonv1.AddToScheme(scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
+	utilruntime.Must(tektonv1.AddToScheme(scheme))
 
 	opts := zap.Options{
 		Development: true,
