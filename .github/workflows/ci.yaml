@@ -74,7 +74,7 @@ jobs:
         id: golangci_version
         run: |
           echo "version=$(go mod edit -json hack/tools/golang-ci/go.mod | \
-            jq -r '.Require | map(select(.Path == "github.com/golangci/golangci-lint"))[].Version')" \
+            jq -r '.Require | map(select(.Path == "github.com/golangci/golangci-lint/v2"))[].Version')" \
             >> $GITHUB_OUTPUT
 
       - name: Lint with golang-ci
