@@ -589,7 +589,8 @@ spec:
       optional: true
     - name: netrc
       optional: true
-  taskRunTemplate: {}
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-etcd-shield
   workspaces:
   - name: git-auth
     secret:
