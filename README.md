@@ -4,8 +4,6 @@ Denies Tekton `PipelineRuns` from getting created on a cluster if `etcd` is gett
 
 # Dependencies
 
-This depends on [kyverno] to implement webhooks.
-
 This requires Tekton's `CustomResourceDefinitions` to be installed, specifically the `PipelineRun` CRD.
 
 # Architecture
@@ -13,7 +11,6 @@ This requires Tekton's `CustomResourceDefinitions` to be installed, specifically
 There are three main components to `etcd-shield`:
 - Prometheus queries
 - Metrics
-- Kyverno webhooks
 
 ## Prometheus queries
 
@@ -42,8 +39,8 @@ Metrics exposed:
 
 ## Webhooks
 
-Webhooks are implemented using kyverno's `ClusterPolicy` resource.  They listen for creation events
-for `PipelineRuns` and load whether to allow or deny `ClusterPolicy` resources based on the value we
+Webhooks are implemented using Kubebuilder. They listen for creation events
+for `PipelineRuns` and decide whether to allow or deny resources based on the value we
 stored in the `ConfigMap` above.
 
 We've separated webhooks out from Prometheus queries for a few reasons:
@@ -52,5 +49,4 @@ We've separated webhooks out from Prometheus queries for a few reasons:
 request could cause a lot of load on Prometheus.
 - We can scale responding to admission requests independently from running Prometheus queries.
 
-[kyverno]: https://kyverno.io/
 [JK flip-flop]: https://en.wikipedia.org/wiki/Flip-flop_(electronics)#JK_flip-flop
