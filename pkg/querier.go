@@ -26,13 +26,15 @@ type Querier struct {
 	state      StateManager
 	prometheus PromQuery
 	config     Config
+	metrics    *Metrics
 }
 
-func NewQuerier(prom PromQuery, state StateManager, config Config) *Querier {
+func NewQuerier(prom PromQuery, state StateManager, config Config, metrics *Metrics) *Querier {
 	querier := Querier{
 		prometheus: prom,
 		state:      state,
 		config:     config,
+		metrics:    metrics,
 	}
 
 	return &querier
@@ -76,6 +78,13 @@ func (q *Querier) Process(ctx context.Context) error {
 	err = q.state.WriteConfig(ctx, !firing)
 	if err != nil {
 		return err
+	}
+
+	// step 3: write metrics
+	if firing {
+		q.metrics.Enabled.Set(1.0)
+	} else {
+		q.metrics.Enabled.Set(0.0)
 	}
 
 	return nil
