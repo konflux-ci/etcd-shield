@@ -23,12 +23,14 @@ import (
 )
 
 type Webhook struct {
-	state StateManager
+	state   StateManager
+	metrics *Metrics
 }
 
-func NewWebhook(state StateManager) admission.CustomValidator {
+func NewWebhook(state StateManager, metrics *Metrics) admission.CustomValidator {
 	return &Webhook{
-		state: state,
+		state:   state,
+		metrics: metrics,
 	}
 }
 
@@ -37,10 +39,13 @@ var _ admission.CustomValidator = &Webhook{}
 func (w *Webhook) ValidateCreate(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
 	allow, err := w.state.ReadConfig(ctx)
 	if err != nil {
+		w.metrics.Denied.Inc()
 		return nil, err
 	} else if !allow {
+		w.metrics.Denied.Inc()
 		return nil, fmt.Errorf("PipelineRun admission currently not allowed")
 	}
+	w.metrics.Allowed.Inc()
 	return nil, nil
 }
 
