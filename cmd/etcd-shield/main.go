@@ -34,6 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/metrics"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/filters"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -60,7 +61,11 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 		Name:      cfg.DestName,
 	})
 
-	querier := shield.NewQuerier(prom, state, *cfg)
+	reg := metrics.Registry
+	metrics := shield.NewMetrics()
+	reg.MustRegister(metrics)
+
+	querier := shield.NewQuerier(prom, state, *cfg, metrics)
 
 	err = manager.Add(querier)
 	if err != nil {
@@ -69,7 +74,7 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 
 	err = ctrl.NewWebhookManagedBy(manager).
 		For(&tektonv1.PipelineRun{}).
-		WithValidator(shield.NewWebhook(state)).
+		WithValidator(shield.NewWebhook(state, metrics)).
 		Complete()
 	if err != nil {
 		ctrl.Log.Error(err, "unable to setup pipelinerun webhooks")
@@ -102,12 +107,14 @@ func main() {
 	var tlsCert string
 	var tlsKey string
 	var configPath string
+	var metricsAddr string
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false, "Enable leader election.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.IntVar(&webhookPort, "port", 9443, "Port to listen for webhook events on.")
 	flag.StringVar(&tlsCert, "tls-cert", "/var/tls/tls.crt", "File location of tls certificate.")
 	flag.StringVar(&tlsKey, "tls-key", "/var/tls/tls.key", "File location of tls key pair.")
 	flag.StringVar(&configPath, "config", "/etc/etcd-shield/config.yaml", "Location of etcd-shield config")
+	flag.StringVar(&metricsAddr, "metrics-addr", ":9100", "Address to serve metrics on")
 
 	scheme := runtime.NewScheme()
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
@@ -138,6 +145,7 @@ func main() {
 		LeaderElectionID:       "etcd-shield.konflux-ci.dev",
 		HealthProbeBindAddress: probeAddr,
 		Metrics: server.Options{
+			BindAddress:    metricsAddr,
 			FilterProvider: filters.WithAuthenticationAndAuthorization,
 			SecureServing:  true,
 			TLSOpts:        tlsOpts,
