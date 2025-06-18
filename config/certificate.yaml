@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: etcd-shield-ca
+spec:
+  dnsNames:
+  - etcd-shield.etcd-shield.svc
+  - etcd-shield.etcd-shield.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: selfsigned-issuer
+  secretName: etcd-shield-ca

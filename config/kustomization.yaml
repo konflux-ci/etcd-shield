@@ -7,10 +7,6 @@ configMapGenerator:
 # generatorOptions:
 #   # until https://github.com/kubernetes-sigs/kustomize/issues/4475 is fixed
 #   disableNameSuffixHash: true
-images:
-- name: etcd-shield
-  newName: quay.io/ansadler/etcd-shield
-  newTag: test
 namespace: etcd-shield
 resources:
 - deployment.yaml
