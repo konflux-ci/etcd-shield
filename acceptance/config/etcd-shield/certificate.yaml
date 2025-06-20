@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: etcd-shield-tls
+  namespace: etcd-shield
+spec:
+  dnsNames:
+  - localhost
+  issuerRef:
+    kind: ClusterIssuer
+    name: self-signed-cluster-issuer
+  secretName: etcd-shield-tls

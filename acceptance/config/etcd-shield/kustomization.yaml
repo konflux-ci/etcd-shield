@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: etcd-shield
+resources:
+- ../../../config/
+- certificate.yaml
+
+patches:
+  - path: patch-imagepullpolicy.yaml
+    target:
+      kind: Deployment
+      name: etcd-shield

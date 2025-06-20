@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etcd-shield
+spec:
+  template:
+    spec:
+      containers:
+        - name: etcd-shield
+          imagePullPolicy: IfNotPresent
