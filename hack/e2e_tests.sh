@@ -17,6 +17,7 @@
 ROOT=$(realpath "$(dirname "${0}")/..")
 OUTDIR="${ROOT}/out"
 CLUSTER_NAME="etcd-shield-test"
+IMAGE_BUILDER=${IMAGE_BUILDER:-podman}
 
 set -o pipefail
 
@@ -59,15 +60,16 @@ function deploy_cert_manager() {
 function build_and_deploy_etcd_shield() {
     pushd "${ROOT}" || exit
     local IMG=etcd-shield:latest
-    make build-image IMG=${IMG} IMAGE_BUILDER=podman
-    podman save ${IMG} | kind load image-archive /dev/stdin -n ${CLUSTER_NAME}
+    make build-image "IMG=${IMG}" "IMAGE_BUILDER=${IMAGE_BUILDER}"
+    "${IMAGE_BUILDER}" save "${IMG}" | kind load image-archive /dev/stdin -n "${CLUSTER_NAME}"
 
     pushd "${OUTDIR}" || exit
         # remove kustomization manifest if it exists
         [[ -e "./kustomization.yaml" ]] && rm ./kustomization.yaml
         kustomize init
-        kustomize edit add resource ../config
-        kustomize edit set image etcd-shield=etcd-shield:latest
+        kustomize edit add resource ../acceptance/config/
+        [[ "${IMAGE_BUILDER}" == "podman" ]] && IMG="localhost/${IMG}"
+        kustomize edit set image "etcd-shield=${IMG}"
         kustomize build | kubectl apply -f -
     popd || exit
 
