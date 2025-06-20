@@ -31,6 +31,7 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/cache"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
@@ -42,6 +43,19 @@ import (
 
 func namespace() string {
 	return os.Getenv("NAMESPACE")
+}
+
+func stateManager(cli client.Client, config *shield.Config) shield.StateManager {
+	env := os.Getenv("STATE_MANAGER")
+	if env == "in-memory" {
+		ctrl.Log.Info("using in-memory manager")
+		return shield.NewInMemoryState()
+	}
+	ctrl.Log.Info("STATE_MANAGER variable unrecognized, using configmap manager", "value", env)
+	return shield.NewState(cli, types.NamespacedName{
+		Namespace: config.DestNamespace,
+		Name:      config.DestName,
+	})
 }
 
 func SetupStateWithManager(manager manager.Manager, configPath string) error {
@@ -56,10 +70,7 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 		return fmt.Errorf("failed to setup prometheus connection: %s", err)
 	}
 
-	state := shield.NewState(client, types.NamespacedName{
-		Namespace: cfg.DestNamespace,
-		Name:      cfg.DestName,
-	})
+	state := stateManager(client, cfg)
 
 	reg := metrics.Registry
 	metrics := shield.NewMetrics()

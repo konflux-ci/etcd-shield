@@ -12,6 +12,7 @@ require (
 	k8s.io/api v0.31.7
 	k8s.io/apimachinery v0.31.7
 	k8s.io/client-go v0.31.7
+	pgregory.net/rapid v1.2.0
 	sigs.k8s.io/controller-runtime v0.19.7
 	sigs.k8s.io/yaml v1.4.0
 )
