@@ -36,15 +36,10 @@ function start_cluster() {
 
 function deploy_prometheus() {
     NAMESPACE="prometheus"
-    TMPDIR="$(mktemp -d)"
-    LATEST=$(curl -s https://api.github.com/repos/prometheus-operator/prometheus-operator/releases/latest | jq -cr .tag_name)
-    curl -s "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/refs/tags/${LATEST}/kustomization.yaml" > "$TMPDIR/kustomization.yaml"
-    curl -s "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/refs/tags/${LATEST}/bundle.yaml" > "$TMPDIR/bundle.yaml"
-    kubectl create namespace ${NAMESPACE}
-    (cd "${TMPDIR}" && kustomize edit set namespace ${NAMESPACE}) && kubectl create -k "${TMPDIR}"
-
-    # TODO: finish deploying prometheus.  This only deploys an instance of
-    # prometheus operator, not of prometheus itself.
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    helm repo update
+    helm install prometheus prometheus-community/kube-prometheus-stack \
+      --namespace "${NAMESPACE}" --create-namespace
 }
 
 function deploy_cert_manager() {
