@@ -4,6 +4,11 @@ namespace: etcd-shield
 resources:
 - ../../../config/
 - certificate.yaml
+configMapGenerator:
+- files:
+  - ./config.yaml
+  name: etcd-shield-config
+  behavior: replace
 
 patches:
   - path: patch-imagepullpolicy.yaml
@@ -14,4 +19,7 @@ patches:
     target:
       kind: ServiceMonitor
       name: etcd-shield-metrics
-
+  - path: patch-etcd-shield-prometheusrule.yaml
+    target:
+      kind: PrometheusRule
+      name: etcd-shield-triggers

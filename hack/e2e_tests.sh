@@ -40,6 +40,7 @@ function deploy_prometheus() {
     helm repo update
     helm install prometheus prometheus-community/kube-prometheus-stack \
       --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+      --set prometheus.prometheusSpec.ruleSelectorNilUsesHelmValues=false \
       --namespace "${NAMESPACE}" --create-namespace
 }
 
