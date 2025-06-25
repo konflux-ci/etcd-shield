@@ -2,8 +2,6 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: etcd-shield-metrics
-  labels:
-    apps: etcd-shield
 spec:
   endpoints:
     - interval: 15s
@@ -15,12 +13,4 @@ spec:
           key: token
           name: metrics-reader
       tlsConfig:
-        ca:
-          secret:
-            key: service-ca.crt
-            name: metrics-reader
-            optional: false
-        serverName: etcd-shield-metrics.etcd-shield.svc
-  selector:
-    matchLabels:
-      apps: etcd-shield
+        insecureSkipVerify: true

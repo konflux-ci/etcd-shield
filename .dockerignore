@@ -1,10 +1,10 @@
-.git
-.github
-.tekton
+.git/
+.github/
+.tekton/
 
-acceptance
-config
-hack
+acceptance/
+config/
+hack/
 
 README.md
 renovate.json

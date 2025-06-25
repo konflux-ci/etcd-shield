@@ -10,3 +10,8 @@ patches:
     target:
       kind: Deployment
       name: etcd-shield
+  - path: patch-etcd-shield-metrics-tls.yaml
+    target:
+      kind: ServiceMonitor
+      name: etcd-shield-metrics
+
