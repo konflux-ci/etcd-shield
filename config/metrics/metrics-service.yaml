@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: etcd-shield-metrics
   namespace: etcd-shield
+  labels:
+    apps: etcd-shield
 spec:
   selector:
     app: etcd-shield

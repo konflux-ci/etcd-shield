@@ -39,6 +39,7 @@ function deploy_prometheus() {
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
     helm repo update
     helm install prometheus prometheus-community/kube-prometheus-stack \
+      --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
       --namespace "${NAMESPACE}" --create-namespace
 }
 
