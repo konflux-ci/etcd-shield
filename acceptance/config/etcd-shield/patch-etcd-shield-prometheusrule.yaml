@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: etcd-shield-triggers
+spec:
+  groups:
+  - name: etcd_shield_triggers
+    interval: 1s
+    rules:
+    - alert: EtcdShieldDenyAdmission
+      expr: etcd_shield_trigger != bool 0
+      for: 2s
+      keep_firing_for: 10s
+      labels:
+        severity: critical
+      annotations:
+        summary: etcd-shield is denying admission
+        description: Etcd is nearing capacity limits, so etcd-shield is denying admission
+    - record: etcd_shield_trigger
+      expr: vector(0)
