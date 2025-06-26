@@ -19,7 +19,7 @@ OUTDIR="${ROOT}/out"
 CLUSTER_NAME="etcd-shield-test"
 IMAGE_BUILDER=${IMAGE_BUILDER:-podman}
 
-set -o pipefail
+set -e -o pipefail
 
 mkdir -p "${OUTDIR}"
 
@@ -54,6 +54,12 @@ function deploy_cert_manager() {
         -l app.kubernetes.io/instance=cert-manager
 }
 
+function install_required_tekton_crds() {
+  curl -Ls https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml | \
+    yq 'select(.metadata.name=="pipelineruns.tekton.dev")' | \
+    kubectl apply -f -
+}
+
 function build_and_deploy_etcd_shield() {
     pushd "${ROOT}" || exit
     local IMG=etcd-shield:latest
@@ -74,6 +80,7 @@ function build_and_deploy_etcd_shield() {
 }
 
 start_cluster || exit 1
+install_required_tekton_crds || exit 1
 deploy_cert_manager || exit 1
 deploy_prometheus || exit 1
 build_and_deploy_etcd_shield || exit 1
