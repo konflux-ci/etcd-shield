@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: no-op-pipelinerun
+spec:
+  pipelineSpec:
+    tasks:
+      - name: no-op-task
+        taskSpec:
+          steps:
+            - name: echo-noop
+              image: ubuntu:latest
+              script: |
+                #!/bin/bash
+                echo "No operation completed."

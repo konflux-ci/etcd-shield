@@ -3,7 +3,7 @@ kind: ValidatingWebhookConfiguration
 metadata:
   annotations:
     service.beta.openshift.io/inject-cabundle: 'true'
-    cert-manager.io/inject-ca-from: etcd-shield/etcd-shield-ca
+    cert-manager.io/inject-ca-from: etcd-shield/etcd-shield-tls
   name: etcd-shield-validating-webhook-configuration
 webhooks:
 - admissionReviewVersions:
