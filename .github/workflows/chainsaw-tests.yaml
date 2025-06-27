@@ -1,0 +1,32 @@
+name: Run Chainsaw tests
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  chainsaw-test:
+    name: Run Chainsaw tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Create k8s Kind Cluster
+      uses: helm/kind-action@v1
+
+    - uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      shell: bash
+      run: ./hack/e2e_tests.sh
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@dc72c7d5c4d10cd6bcb8cf6e3fd625a9e5e537da  # v3.7.0
+
+    - name: Install Chainsaw
+      uses: kyverno/action-install-chainsaw@f2b47b97dc889c12702113753d713f01ec268de5  # v0.2.12
+      with:
+        verify: true
+
+    - name: Run chainsaw
+      shell: bash
+      run: chainsaw test --no-color=false acceptance/
