@@ -4,7 +4,7 @@ metadata:
   name: etcd-shield-metrics
   namespace: etcd-shield
   labels:
-    apps: etcd-shield
+    app: etcd-shield
 spec:
   selector:
     app: etcd-shield
