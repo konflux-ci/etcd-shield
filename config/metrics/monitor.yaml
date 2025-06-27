@@ -20,7 +20,7 @@ spec:
             key: service-ca.crt
             name: metrics-reader
             optional: false
-        serverName: etcd-shield-metrics.etcd-shield.svc
+        serverName: etcd-shield.etcd-shield.svc
   selector:
     matchLabels:
       app: etcd-shield
