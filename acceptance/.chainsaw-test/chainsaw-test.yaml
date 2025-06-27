@@ -1,0 +1,62 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kyverno/chainsaw/main/.schemas/json/test-chainsaw-v1alpha1.json
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: etcd-shield-allows-on-alert-not-firing
+spec:
+  description: |
+    etcd-shield allows new PipelineRuns if the `EtcdShieldDenyAdmission` is not firing
+  concurrent: false
+  namespace: 'etcd-shield-allows'
+  steps:
+  - name: when-etcdshielddenyadmission-is-not-firing
+    try:
+    - apply:
+        file: ./resources/actual-prometheusrule-etcd-shield-triggers-not-firing.yaml
+    - script:
+        # it seems prometheus needs a restart to get the change to the rule quickly
+        timeout: 60s
+        content: |
+          kubectl get statefulsets -n prometheus -o name --no-headers | \
+            xargs -I{} -P8 kubectl rollout restart -n prometheus {}
+    - script:
+        timeout: 300s
+        content: |
+            kubectl rollout status -n prometheus statefulsets
+  - name: then-new-pipelinerun-is-allowed
+    try:
+    - apply:
+        timeout: 60s
+        file: ./resources/actual-pipelinerun.yaml
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/kyverno/chainsaw/main/.schemas/json/test-chainsaw-v1alpha1.json
+apiVersion: chainsaw.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: etcd-shield-denies-on-alert-firing
+spec:
+  description: |
+    etcd-shield denies new PipelineRuns if the `EtcdShieldDenyAdmission` is firing
+  concurrent: false
+  namespace: 'etcd-shield-denies'
+  steps:
+  - name: when-etcdshielddenyadmission-is-firing
+    try:
+    - apply:
+        file: ./resources/actual-prometheusrule-etcd-shield-triggers-firing.yaml
+    - script:
+        # it seems prometheus needs a restart to get the change to the rule quickly
+        timeout: 60s
+        content: |
+          kubectl get statefulsets -n prometheus -o name --no-headers | \
+            xargs -I{} -P8 kubectl rollout restart -n prometheus {}
+    - script:
+        timeout: 300s
+        content: |
+            kubectl rollout status -n prometheus statefulsets
+  - name: then-new-pipelinerun-is-denied
+    try:
+    - error:
+        timeout: 60s
+        file: ./resources/actual-pipelinerun.yaml
