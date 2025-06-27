@@ -60,12 +60,16 @@ function install_required_tekton_crds() {
     kubectl apply -f -
 }
 
-function build_and_deploy_etcd_shield() {
+function build_etcd_shield() {
     pushd "${ROOT}" || exit
     local IMG=etcd-shield:latest
     make build-image "IMG=${IMG}" "IMAGE_BUILDER=${IMAGE_BUILDER}"
     "${IMAGE_BUILDER}" save "${IMG}" | kind load image-archive /dev/stdin -n "${CLUSTER_NAME}"
+    popd || exit
+}
 
+function deploy_etcd_shield() {
+    local IMG=etcd-shield:latest
     pushd "${OUTDIR}" || exit
         # remove kustomization manifest if it exists
         [[ -e "./kustomization.yaml" ]] && rm ./kustomization.yaml
@@ -75,12 +79,11 @@ function build_and_deploy_etcd_shield() {
         kustomize edit set image "etcd-shield=${IMG}"
         kustomize build | kubectl apply -f -
     popd || exit
-
-    popd || exit
 }
 
 start_cluster || exit 1
 install_required_tekton_crds || exit 1
 deploy_cert_manager || exit 1
 deploy_prometheus || exit 1
-build_and_deploy_etcd_shield || exit 1
+build_etcd_shield || exit 1
+deploy_etcd_shield || exit 1
