@@ -21,7 +21,7 @@ COPY . .
 # by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -ldflags="-s -w" -trimpath -a -o /tmp/server ./cmd/etcd-shield/main.go
 
-FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:dfd6e38dfecbb306899a548be0509c2ea16ff1cf843845682948e755de1ae948
+FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:ef76ed20e66a9b19ccbbafe5657d73246c78c8f06ef3161e0fce6831ed4f7352
 WORKDIR /
 COPY --from=builder /tmp/server .
 USER 65532:65532
