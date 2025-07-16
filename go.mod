@@ -21,7 +21,7 @@ require (
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20230502190836-7399e0f8ee5e // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
-	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a // indirect
+	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/blendle/zapdriver v1.3.1 // indirect
