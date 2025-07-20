@@ -2,7 +2,7 @@ module github.com/konflux-ci/namespace-lister/hack/tools/golang-ci
 
 go 1.23.0
 
-require github.com/golangci/golangci-lint/v2 v2.2.1
+require github.com/golangci/golangci-lint/v2 v2.2.2
 
 require (
 	4d63.com/gocheckcompilerdirectives v1.3.0 // indirect
@@ -10,7 +10,7 @@ require (
 	codeberg.org/chavacava/garif v0.2.0 // indirect
 	github.com/4meepo/tagalign v1.4.2 // indirect
 	github.com/Abirdcfly/dupword v0.1.6 // indirect
-	github.com/AlwxSin/noinlineerr v1.0.3 // indirect
+	github.com/AlwxSin/noinlineerr v1.0.4 // indirect
 	github.com/Antonboom/errname v1.1.0 // indirect
 	github.com/Antonboom/nilnil v1.1.0 // indirect
 	github.com/Antonboom/testifylint v1.6.1 // indirect
@@ -19,7 +19,7 @@ require (
 	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/OpenPeeDeeP/depguard/v2 v2.2.1 // indirect
-	github.com/alecthomas/chroma/v2 v2.18.0 // indirect
+	github.com/alecthomas/chroma/v2 v2.19.0 // indirect
 	github.com/alecthomas/go-check-sumtype v0.3.1 // indirect
 	github.com/alexkohler/nakedret/v2 v2.0.6 // indirect
 	github.com/alexkohler/prealloc v1.0.0 // indirect
