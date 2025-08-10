@@ -729,8 +729,8 @@ k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff h1:/usPimJzUKKu+m+TE36gUy
 k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff/go.mod h1:5jIi+8yX4RIb8wk3XwBo5Pq2ccx4FP10ohkbSKCZoK8=
 k8s.io/utils v0.0.0-20250604170112-4c0f3b243397 h1:hwvWFiBzdWw1FhfY1FooPn3kzWuJ8tmbZBHi4zVsl1Y=
 k8s.io/utils v0.0.0-20250604170112-4c0f3b243397/go.mod h1:OLgZIPagt7ERELqWJFomSt595RzquPNLL48iOWgYOg0=
-knative.dev/pkg v0.0.0-20250804212045-2a0abb7b5eb3 h1:5IWHlFvSTR/gZY+bShXCAHFFZ6rQqhYvx1KxVwlsnKw=
-knative.dev/pkg v0.0.0-20250804212045-2a0abb7b5eb3/go.mod h1:qpyBu3z/r1fRfyLo/Zdpis1mmtixdXmsCPmJMz/BsLc=
+knative.dev/pkg v0.0.0-20250807143752-9402b8ca51f1 h1:VAh9eNHLXlYzdGd7FWPPZFs/mzROsJFlm/u5j7eHqBg=
+knative.dev/pkg v0.0.0-20250807143752-9402b8ca51f1/go.mod h1:qpyBu3z/r1fRfyLo/Zdpis1mmtixdXmsCPmJMz/BsLc=
 pgregory.net/rapid v1.2.0 h1:keKAYRcjm+e1F0oAuU5F5+YPAWcyxNNRK2wud503Gnk=
 pgregory.net/rapid v1.2.0/go.mod h1:PY5XlDGj0+V1FCq0o192FdRhpKHGTRIWBgqjDBTrq04=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
