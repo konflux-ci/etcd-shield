@@ -7,13 +7,13 @@
     ]
   },
   "kubernetes": {
-    "fileMatch": [
-      "^config/.*\\.yaml$"
+    "managerFilePatterns": [
+      "/^config/.*\\.yaml$/"
     ]
   },
   "kustomize": {
-    "fileMatch": [
-      "^/config/kustomization\\.ya?ml$"
+    "managerFilePatterns": [
+      "/^/config/kustomization\\.ya?ml$/"
     ],
     "pinDigests": false
   },
