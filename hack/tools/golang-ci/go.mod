@@ -76,7 +76,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gofrs/flock v0.12.1 // indirect
 	github.com/golangci/dupl v0.0.0-20250308024227-f665c8d69b32 // indirect
-	github.com/golangci/go-printf-func-name v0.1.0 // indirect
+	github.com/golangci/go-printf-func-name v0.1.1 // indirect
 	github.com/golangci/gofmt v0.0.0-20250704145412-3e58ba0443c6 // indirect
 	github.com/golangci/golines v0.0.0-20250217232252-b35a6149b587 // indirect
 	github.com/golangci/misspell v0.7.0 // indirect
@@ -196,11 +196,11 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/exp v0.0.0-20250718183923-645b1fa84792 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20251002181428-27f1f14c8bb9 // indirect
-	golang.org/x/mod v0.26.0 // indirect
+	golang.org/x/mod v0.27.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
-	golang.org/x/tools v0.35.0 // indirect
+	golang.org/x/tools v0.36.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
