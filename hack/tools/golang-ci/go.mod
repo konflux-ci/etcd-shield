@@ -17,7 +17,7 @@ require (
 	github.com/Antonboom/nilnil v1.1.0 // indirect
 	github.com/Antonboom/testifylint v1.6.1 // indirect
 	github.com/BurntSushi/toml v1.5.0 // indirect
-	github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 // indirect
+	github.com/Djarvur/go-err113 v0.1.1 // indirect
 	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/OpenPeeDeeP/depguard/v2 v2.2.1 // indirect
@@ -196,11 +196,11 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/exp v0.0.0-20250718183923-645b1fa84792 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20251002181428-27f1f14c8bb9 // indirect
-	golang.org/x/mod v0.26.0 // indirect
+	golang.org/x/mod v0.27.0 // indirect
 	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
-	golang.org/x/tools v0.35.0 // indirect
+	golang.org/x/tools v0.36.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
