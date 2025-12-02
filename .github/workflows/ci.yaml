@@ -78,7 +78,7 @@ jobs:
             >> $GITHUB_OUTPUT
 
       - name: Lint with golang-ci
-        uses: golangci/golangci-lint-action@v7
+        uses: golangci/golangci-lint-action@v9
         with:
           version: ${{ steps.golangci_version.outputs.version }}
           args: --timeout=5m
