@@ -27,4 +27,4 @@ COPY --from=builder /tmp/server .
 USER 65532:65532
 
 ENTRYPOINT ["/server"]
-
+# add test comment
