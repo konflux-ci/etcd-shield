@@ -2,7 +2,9 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "packageRules": [
     {
-      "matchManager": "tekton",
+      "matchManagers": [
+        "tekton"
+      ],
       "prPriority": 10
     }
   ],
