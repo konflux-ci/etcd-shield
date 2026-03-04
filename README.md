@@ -39,7 +39,7 @@ Metrics exposed:
 
 ## Webhooks
 
-Webhooks are implemented using Kubebuilder. They listen for creation events
+Webhooks are implemented using an admission controller. They listen for creation events
 for `PipelineRuns` and decide whether to allow or deny resources based on the value we
 stored in the `ConfigMap` above.
 
