@@ -103,7 +103,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.33.1 // indirect
 	k8s.io/apiserver v0.33.1 // indirect
 	k8s.io/component-base v0.33.1 // indirect
-	k8s.io/klog/v2 v2.130.1 // indirect
+	k8s.io/klog/v2 v2.140.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
 	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2 // indirect
 	knative.dev/pkg v0.0.0-20250804212045-2a0abb7b5eb3 // indirect
