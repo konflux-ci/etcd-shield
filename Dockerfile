@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM registry.access.redhat.com/ubi10/go-toolset@sha256:d3bf5a0c74215f921e9eb8c42b62fe440d597d9704c6ef3f263844d5489a143c AS builder
+FROM registry.access.redhat.com/ubi10/go-toolset@sha256:b7f71131f21be923baaaf952309b7940ae7c6a55ca44a7a91460adc6c8afd4de AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -22,7 +22,7 @@ COPY . .
 # by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -ldflags="-s -w" -trimpath -a -o /tmp/server ./cmd/etcd-shield/main.go
 
-FROM registry.access.redhat.com/ubi10-micro:10.1-1769518576@sha256:5b152b333925a2f5243f6556d88296994b26303ee747de55388022783568e017
+FROM registry.access.redhat.com/ubi10/ubi-micro@sha256:551f8ee81be3dbabd45a9c197f3724b9724c1edb05d68d10bfe85a5c9e46a458
 WORKDIR /
 COPY --from=builder /tmp/server .
 USER 65532:65532
