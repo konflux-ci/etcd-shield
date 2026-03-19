@@ -13,6 +13,8 @@ jobs:
   unit-tests:
     name: Run unit tests
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
 
     steps:
       - name: Checkout Git Repository
@@ -23,9 +25,17 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
-          make test
+          make test-coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
+          flags: unit-tests
+          files: cover.out
+          fail_ci_if_error: false
 
   go-tidy:
     name: Tidy go mod
