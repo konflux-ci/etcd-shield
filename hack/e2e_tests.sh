@@ -63,7 +63,7 @@ function install_required_tekton_crds() {
 function build_etcd_shield() {
     pushd "${ROOT}" || exit
     local IMG=etcd-shield:latest
-    make build-image "IMG=${IMG}" "IMAGE_BUILDER=${IMAGE_BUILDER}"
+    make build-image "IMG=${IMG}" "IMAGE_BUILDER=${IMAGE_BUILDER}" "ENABLE_COVERAGE=${ENABLE_COVERAGE:-false}"
     "${IMAGE_BUILDER}" save "${IMG}" | kind load image-archive /dev/stdin -n "${CLUSTER_NAME}"
     popd || exit
 }

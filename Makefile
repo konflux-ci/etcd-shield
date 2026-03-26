@@ -7,7 +7,7 @@ build:
 	$(GO) build ./cmd/etcd-shield/main.go
 
 build-image:
-	$(IMAGE_BUILDER) build -t $(IMG) .
+	$(IMAGE_BUILDER) build --build-arg ENABLE_COVERAGE=$(ENABLE_COVERAGE) -t $(IMG) .
 
 fmt:
 	$(GO) fmt ./...
