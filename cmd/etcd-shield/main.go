@@ -40,6 +40,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
+// managerState is the subset of manager.Manager required by SetupStateWithManager.
+// A real manager.Manager implements this interface; tests may use a narrow mock.
+type managerState interface {
+	GetClient() client.Client
+	Add(manager.Runnable) error
+	GetWebhookServer() webhook.Server
+}
+
 func namespace() string {
 	return os.Getenv("NAMESPACE")
 }
@@ -57,8 +65,8 @@ func stateManager(cli client.Client, config *shield.Config) shield.StateManager 
 	})
 }
 
-func SetupStateWithManager(manager manager.Manager, configPath string) error {
-	client := manager.GetClient()
+func SetupStateWithManager(m managerState, configPath string) error {
+	client := m.GetClient()
 	cfg, err := shield.GetConfig(ctrl.Log, configPath)
 	if err != nil {
 		return fmt.Errorf("failed to fetch config: %s", err)
@@ -77,12 +85,13 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 
 	querier := shield.NewQuerier(prom, state, *cfg, metrics)
 
-	err = manager.Add(querier)
+	err = m.Add(querier)
 	if err != nil {
+		_ = reg.Unregister(metrics)
 		return fmt.Errorf("failed to register prometheus querier: %s", err)
 	}
 
-	manager.GetWebhookServer().Register("/validate-resource", shield.NewWebhook(state, metrics))
+	m.GetWebhookServer().Register("/validate-resource", shield.NewWebhook(state, metrics))
 	return nil
 }
 
