@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"k8s.io/apimachinery/pkg/runtime"
+	tektonv1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
@@ -27,16 +27,16 @@ type Webhook struct {
 	metrics *Metrics
 }
 
-func NewWebhook(state StateManager, metrics *Metrics) admission.CustomValidator {
+func NewWebhook(state StateManager, metrics *Metrics) admission.Validator[*tektonv1.PipelineRun] {
 	return &Webhook{
 		state:   state,
 		metrics: metrics,
 	}
 }
 
-var _ admission.CustomValidator = &Webhook{}
+var _ admission.Validator[*tektonv1.PipelineRun] = &Webhook{}
 
-func (w *Webhook) ValidateCreate(ctx context.Context, obj runtime.Object) (admission.Warnings, error) {
+func (w *Webhook) ValidateCreate(ctx context.Context, obj *tektonv1.PipelineRun) (admission.Warnings, error) {
 	allow, err := w.state.ReadConfig(ctx)
 	if err != nil {
 		return nil, err
@@ -46,12 +46,12 @@ func (w *Webhook) ValidateCreate(ctx context.Context, obj runtime.Object) (admis
 	return nil, nil
 }
 
-func (*Webhook) ValidateDelete(context.Context, runtime.Object) (admission.Warnings, error) {
+func (*Webhook) ValidateDelete(context.Context, *tektonv1.PipelineRun) (admission.Warnings, error) {
 	// we don't care about validating deletes
 	return nil, nil
 }
 
-func (*Webhook) ValidateUpdate(context.Context, runtime.Object, runtime.Object) (admission.Warnings, error) {
+func (*Webhook) ValidateUpdate(context.Context, *tektonv1.PipelineRun, *tektonv1.PipelineRun) (admission.Warnings, error) {
 	// we don't care about validating updates
 	return nil, nil
 }

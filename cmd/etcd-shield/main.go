@@ -83,8 +83,7 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 		return fmt.Errorf("failed to register prometheus querier: %s", err)
 	}
 
-	err = ctrl.NewWebhookManagedBy(manager).
-		For(&tektonv1.PipelineRun{}).
+	err = ctrl.NewWebhookManagedBy(manager, &tektonv1.PipelineRun{}).
 		WithValidator(shield.NewWebhook(state, metrics)).
 		Complete()
 	if err != nil {
