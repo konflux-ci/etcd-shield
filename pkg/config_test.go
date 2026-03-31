@@ -15,8 +15,10 @@
 package etcd_shield_test
 
 import (
+	"os"
 	"time"
 
+	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"sigs.k8s.io/yaml"
@@ -43,15 +45,45 @@ var _ = Describe("Pkg/Config", func() {
 		yamlConfig = string(config)
 	})
 
-	It("Should deserialize a yaml config", func() {
-		var config etcd_shield.Config
-		err := yaml.Unmarshal([]byte(yamlConfig), &config)
-		Expect(err).NotTo(HaveOccurred())
+	Describe("GetConfig", func() {
+		It("loads and returns config from a file path", func() {
+			f, err := os.CreateTemp("", "etcd-shield-config-*.yaml")
+			Expect(err).NotTo(HaveOccurred())
+			defer func() { Expect(os.Remove(f.Name())).To(Succeed()) }()
 
-		Expect(config.DestName).To(Equal("etcd-shield-state"))
-		Expect(config.DestNamespace).To(Equal("etcd-shield"))
-		Expect(config.Prometheus.AlertName).To(Equal("foo"))
-		Expect(config.Prometheus.Address).To(Equal("prometheus.prometheus.svc:8080"))
-		Expect(config.WaitTime).To(Equal(etcd_shield.NewDuration(15 * time.Second)))
+			_, err = f.WriteString(yamlConfig)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(f.Close()).To(Succeed())
+
+			cfg, err := etcd_shield.GetConfig(logr.Discard(), f.Name())
+			Expect(err).NotTo(HaveOccurred())
+			Expect(cfg).NotTo(BeNil())
+
+			Expect(cfg.DestName).To(Equal("etcd-shield-state"))
+			Expect(cfg.DestNamespace).To(Equal("etcd-shield"))
+			Expect(cfg.Prometheus.AlertName).To(Equal("foo"))
+			Expect(cfg.Prometheus.Address).To(Equal("prometheus.prometheus.svc:8080"))
+			Expect(cfg.WaitTime).To(Equal(etcd_shield.NewDuration(15 * time.Second)))
+		})
+
+		It("returns an error when the file does not exist", func() {
+			cfg, err := etcd_shield.GetConfig(logr.Discard(), "/nonexistent/path/etcd-shield-config.yaml")
+			Expect(err).To(HaveOccurred())
+			Expect(cfg).To(BeNil())
+		})
+
+		It("returns an error when the file is not valid YAML", func() {
+			f, err := os.CreateTemp("", "etcd-shield-bad-config-*.yaml")
+			Expect(err).NotTo(HaveOccurred())
+			defer func() { Expect(os.Remove(f.Name())).To(Succeed()) }()
+
+			_, err = f.WriteString("destName: [\n  unclosed")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(f.Close()).To(Succeed())
+
+			cfg, err := etcd_shield.GetConfig(logr.Discard(), f.Name())
+			Expect(err).To(HaveOccurred())
+			Expect(cfg).To(BeNil())
+		})
 	})
 })
