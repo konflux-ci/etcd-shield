@@ -15,14 +15,26 @@
 package etcd_shield
 
 import (
+	"context"
+
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-func NewWebhook(state StateManager, metrics *Metrics) *admission.Webhook {
-	return &admission.Webhook{
-		Handler: &Handler{
-			state:   state,
-			metrics: metrics,
-		},
+var _ admission.Handler = &Handler{}
+
+type Handler struct {
+	state   StateManager
+	metrics *Metrics
+}
+
+func (w *Handler) Handle(ctx context.Context, _ admission.Request) admission.Response {
+	allow, err := w.state.ReadConfig(ctx)
+	if err != nil {
+		return admission.Errored(500, err)
 	}
+
+	if !allow {
+		return admission.Denied("admission currently not allowed")
+	}
+	return admission.Allowed("object is allowed")
 }
