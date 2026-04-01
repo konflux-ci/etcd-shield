@@ -1,4 +1,4 @@
-// Copyright 2025 Red Hat Inc.
+// Copyright 2026 Red Hat Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,14 +15,26 @@
 package etcd_shield
 
 import (
+	"context"
+
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
-func NewWebhook(state StateManager, metrics *Metrics) *admission.Webhook {
-	return &admission.Webhook{
-		Handler: &Handler{
-			state:   state,
-			metrics: metrics,
-		},
+var _ admission.Handler = &Handler{}
+
+type Handler struct {
+	state   StateManager
+	metrics *Metrics
+}
+
+func (w *Handler) Handle(ctx context.Context, _ admission.Request) admission.Response {
+	allow, err := w.state.ReadConfig(ctx)
+	if err != nil {
+		return admission.Errored(500, err)
 	}
+
+	if !allow {
+		return admission.Denied("resource admission currently not allowed")
+	}
+	return admission.Allowed("resource is allowed")
 }

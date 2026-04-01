@@ -25,7 +25,6 @@ import (
 
 	"github.com/go-logr/logr"
 	shield "github.com/konflux-ci/etcd-shield/pkg"
-	tektonv1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
@@ -83,14 +82,7 @@ func SetupStateWithManager(manager manager.Manager, configPath string) error {
 		return fmt.Errorf("failed to register prometheus querier: %s", err)
 	}
 
-	err = ctrl.NewWebhookManagedBy(manager, &tektonv1.PipelineRun{}).
-		WithValidator(shield.NewWebhook(state, metrics)).
-		Complete()
-	if err != nil {
-		ctrl.Log.Error(err, "unable to setup pipelinerun webhooks")
-		os.Exit(1)
-	}
-
+	manager.GetWebhookServer().Register("/validate-resource", shield.NewWebhook(state, metrics))
 	return nil
 }
 
@@ -128,7 +120,6 @@ func main() {
 
 	scheme := runtime.NewScheme()
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	utilruntime.Must(tektonv1.AddToScheme(scheme))
 
 	opts := zap.Options{
 		Development: true,
