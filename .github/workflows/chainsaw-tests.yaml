@@ -8,6 +8,8 @@ jobs:
   chainsaw-test:
     name: Run Chainsaw tests
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
     - name: Create k8s Kind Cluster
@@ -17,6 +19,8 @@ jobs:
 
     - name: Install Dependencies
       shell: bash
+      env:
+        ENABLE_COVERAGE: "true"
       run: ./hack/e2e_tests.sh
 
     - name: Install Cosign
@@ -30,3 +34,29 @@ jobs:
     - name: Run chainsaw
       shell: bash
       run: chainsaw test --no-color=false acceptance/
+
+    - name: Collect e2e coverage
+      if: always()
+      run: |
+        mkdir -p coverage-output && chmod 777 coverage-output
+        cp $HOME/.kube/config /tmp/kubeconfig && chmod 644 /tmp/kubeconfig
+        podman run --rm \
+          --network host \
+          -v /tmp/kubeconfig:/kubeconfig:ro \
+          -v $PWD/coverage-output:/workspace/coverage-output \
+          -e KUBECONFIG=/kubeconfig \
+          quay.io/konflux-ci/konflux-devprod/coverport-cli@sha256:9a2d0a42fcc0dcea31c1b20b2752bb4dfe76f92a99314968e24f525c782a03f1 \
+          collect \
+            --namespace=etcd-shield \
+            --label-selector=app=etcd-shield \
+            --test-name=e2e-tests \
+            --output=/workspace/coverage-output || true
+
+    - name: Upload e2e coverage to Codecov
+      if: always()
+      uses: codecov/codecov-action@v5
+      with:
+        use_oidc: true
+        flags: e2e-tests
+        directory: coverage-output
+        fail_ci_if_error: false
