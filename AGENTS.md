@@ -15,6 +15,15 @@ Go service:
 | Test               | `make test`          |
 | Test with coverage | `make test-coverage` |
 
+### Single-File Verification
+
+- Lint single file: `go run -modfile hack/tools/golang-ci/go.mod github.com/golangci/golangci-lint/v2/cmd/golangci-lint run ./path/to/package/...`
+- Vet single package: `go vet ./pkg/specific/...`
+- Test single package: `go test ./pkg/specific/...`
+- Test with race detector: `go test -race ./pkg/specific/...`
+- Format single file: `gofmt -w path/to/file.go`
+- YAML lint single file: `yamllint path/to/file.yaml`
+
 K8s manifests:
 | Action    | Command                                                          |
 |-----------|------------------------------------------------------------------|

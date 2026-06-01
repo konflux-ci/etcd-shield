@@ -49,4 +49,32 @@ We've separated webhooks out from Prometheus queries for a few reasons:
 request could cause a lot of load on Prometheus.
 - We can scale responding to admission requests independently from running Prometheus queries.
 
+## Development
+
+### Prerequisites
+
+- Go (version specified in `go.mod`)
+- `yamllint` for YAML linting
+- `kustomize` for Kubernetes manifest rendering
+
+### Getting Started
+
+```bash
+git clone https://github.com/konflux-ci/etcd-shield.git
+cd etcd-shield
+make build
+make test
+```
+
+### Common Tasks
+
+| Action | Command |
+|---|---|
+| Build | `make build` |
+| Run all tests | `make test` |
+| Test with coverage | `make test-coverage` |
+| Lint Go + YAML | `make lint` |
+| Format code | `make fmt` |
+| Vet code | `make vet` |
+
 [JK flip-flop]: https://en.wikipedia.org/wiki/Flip-flop_(electronics)#JK_flip-flop
