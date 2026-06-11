@@ -13,6 +13,12 @@ coverage:
         target: 80%
         informational: true
 
+flags:
+  unit-tests:
+    carryforward: true
+  e2e-tests:
+    carryforward: true
+
 comment:
   layout: "reach,diff,flags,files,footer"
   require_changes: true
