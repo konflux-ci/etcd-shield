@@ -22,7 +22,7 @@ jobs:
       checks: read
       statuses: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: konflux-ci/deptriage@main
         with:
           command: both
