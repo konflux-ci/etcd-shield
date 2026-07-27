@@ -29,7 +29,7 @@ RUN if [ "$ENABLE_COVERAGE" = "true" ]; then \
         CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -ldflags="-s -w" -trimpath -a -o /tmp/server ./cmd/etcd-shield/; \
     fi
 
-FROM registry.access.redhat.com/ubi10/ubi-micro@sha256:6cc8b042384757a5dc8ee0adfa4ff7a3f37467d43c2ca42b24d928929536d579
+FROM registry.access.redhat.com/ubi10/ubi-micro@sha256:af12ec115e0b0c19432cea2b826dea5b8d0d06f77f7c318aed93915b3233abea
 WORKDIR /
 COPY --from=builder /tmp/server .
 USER 65532:65532
