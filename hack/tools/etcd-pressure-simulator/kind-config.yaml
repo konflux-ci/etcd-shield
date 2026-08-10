@@ -1,0 +1,12 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: ClusterConfiguration
+    etcd:
+      local:
+        extraArgs:
+          listen-metrics-urls: "http://0.0.0.0:2381"
+          quota-backend-bytes: "268435456"
