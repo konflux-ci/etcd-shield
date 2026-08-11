@@ -157,7 +157,7 @@ image cache, network speed, and container runtime. Approximate breakdown:
 |----------|---------|-------------|
 | `CLUSTER_NAME` | `etcd-shield-test` | KinD cluster name |
 | `HOLD_SAFETY_FLOOR` | `81.0` | Minimum usage % enforced during HOLD drain |
-| `QUOTA_BYTES` | `268435456` | etcd quota in bytes (256 MB) |
+| `QUOTA_BYTES` | `268435456` | etcd quota in bytes (256 MB). Must match `quota-backend-bytes` in `kind-config.yaml` |
 | `PROMETHEUS_LOCAL_PORT` | `19091` | Local port for Prometheus port-forward |
 
 ## Troubleshooting

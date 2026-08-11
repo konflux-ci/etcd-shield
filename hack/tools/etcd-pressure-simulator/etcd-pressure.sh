@@ -125,8 +125,9 @@ check_cluster() {
 check_kind_context() {
     local ctx
     ctx=$(kubectl config current-context 2>/dev/null || true)
-    if [[ ! "$ctx" =~ ^kind- ]]; then
-        echo "ERROR: Current context '${ctx}' is not a KinD cluster." >&2
+    if [[ "$ctx" != "kind-${CLUSTER_NAME}" ]]; then
+        echo "ERROR: Current context '${ctx}' does not match CLUSTER_NAME '${CLUSTER_NAME}'." >&2
+        echo "Expected context: kind-${CLUSTER_NAME}" >&2
         echo "This tool is designed for local KinD clusters only." >&2
         exit 1
     fi
