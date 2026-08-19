@@ -122,6 +122,10 @@ kind delete cluster --name etcd-shield-test
 Developers insert their own E2E assertions at the marked points between
 commands.
 
+> **Note:** Do not run `hack/e2e_tests.sh` between these commands — it manages
+> its own KinD cluster and would delete the pressure-simulator environment.
+> Write a dedicated E2E test file for pressure-simulator workflows.
+
 ## Expected results
 
 Approximate expected behavior (exact percentages vary by host and timing):

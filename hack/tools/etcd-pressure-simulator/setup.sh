@@ -25,7 +25,7 @@ kind create cluster \
 echo ""
 echo "Installing Prometheus with etcd scraping..."
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
+helm repo update prometheus-community
 helm install prometheus prometheus-community/kube-prometheus-stack \
     -f "${SCRIPT_DIR}/prometheus-values.yaml" \
     -n prometheus --create-namespace

@@ -220,7 +220,7 @@ run_etcdctl() {
         --cacert=/etc/kubernetes/pki/etcd/ca.crt \
         --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt \
         --key=/etc/kubernetes/pki/etcd/healthcheck-client.key \
-        "$@" 2>&1
+        "$@" 2>/dev/null
 }
 
 get_etcd_sizes() {
@@ -318,7 +318,8 @@ create_configmap() {
         small)  payload_b64="$PAYLOAD_SMALL_B64"; size_kb=32 ;;
     esac
 
-    local name="pressure-${size_class}-$(printf '%05d' "$seq")"
+    local name
+    name="pressure-${size_class}-$(printf '%05d' "$seq")"
 
     cat <<EOF | kubectl create -f - >/dev/null 2>&1
 {"apiVersion":"v1","kind":"ConfigMap","metadata":{"name":"${name}","namespace":"${NAMESPACE}","labels":{"app":"etcd-pressure-simulator","pressure-size-class":"${size_class}"},"annotations":{"etcd-pressure/size-kb":"${size_kb}","etcd-pressure/sequence":"${seq}"}},"binaryData":{"payload":"${payload_b64}"}}
@@ -423,9 +424,9 @@ select_cms_to_delete() {
     small_list=$(list_configmaps_by_size "small" "desc")
 
     local n_large n_medium n_small
-    n_large=$(echo "$large_list" | grep -c . 2>/dev/null || echo 0)
-    n_medium=$(echo "$medium_list" | grep -c . 2>/dev/null || echo 0)
-    n_small=$(echo "$small_list" | grep -c . 2>/dev/null || echo 0)
+    n_large=$(awk 'NF{c++} END{print c+0}' <<<"$large_list")
+    n_medium=$(awk 'NF{c++} END{print c+0}' <<<"$medium_list")
+    n_small=$(awk 'NF{c++} END{print c+0}' <<<"$small_list")
 
     local remaining="$target_red"
     local take_large=0 take_medium=0 take_small=0
@@ -572,10 +573,9 @@ cmd_fill() {
     size=$(get_etcd_size)
     usage=$(calc_usage "$size")
 
-    local sizes_info db_size_physical db_size_in_use in_use_usage
+    local sizes_info db_size_in_use in_use_usage
     sizes_info=$(get_etcd_sizes 2>/dev/null || true)
     if [[ -n "$sizes_info" ]]; then
-        db_size_physical=$(echo "$sizes_info" | awk '{print $1}')
         db_size_in_use=$(echo "$sizes_info" | awk '{print $2}')
         in_use_usage=$(calc_usage "$db_size_in_use")
         local gap
@@ -725,6 +725,12 @@ cmd_drain() {
     if [[ "$target" -ge 80 ]]; then
         is_hold="true"
         safety_floor="$HOLD_SAFETY_FLOOR"
+        if awk "BEGIN { exit !($target < $safety_floor) }"; then
+            echo "ERROR: Target ${target}% is below HOLD_SAFETY_FLOOR ${safety_floor}%." >&2
+            echo "No value can satisfy both usage<=${target}% and usage>=${safety_floor}%." >&2
+            echo "Use a target below 80 (RESET mode) or lower HOLD_SAFETY_FLOOR." >&2
+            return 1
+        fi
     fi
 
     printf "Current size: %'d bytes\n" "$size"
