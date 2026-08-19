@@ -258,6 +258,19 @@ etcd_disarm_alarm() {
     fi
 }
 
+etcd_reclaim() {
+    etcd_compact
+    etcd_defrag
+    etcd_disarm_alarm
+}
+
+defrag_and_refresh() {
+    etcd_reclaim
+    refresh_usage
+    size=$CURRENT_SIZE
+    usage=$CURRENT_USAGE
+}
+
 # ---------------------------------------------------------------------------
 # Helpers: payload generation
 # ---------------------------------------------------------------------------
@@ -583,12 +596,7 @@ cmd_fill() {
         if [[ "$gap" -gt 5 ]] || usage_ge "$usage" "100"; then
             printf "Current size: %'d bytes\n" "$size"
             printf "Physical (%s%%) >> in-use (%s%%). Defragmenting first...\n" "$usage" "$in_use_usage"
-            etcd_compact
-            etcd_defrag
-            etcd_disarm_alarm
-            refresh_usage
-            size=$CURRENT_SIZE
-            usage=$CURRENT_USAGE
+            defrag_and_refresh
             printf "After defrag: %s%%\n" "$usage"
         fi
     fi
@@ -649,9 +657,7 @@ cmd_fill() {
                     echo ""
                     echo "WARNING: ConfigMap creation failed (etcd may have hit quota)."
                     echo "Running compaction and defragmentation..."
-                    etcd_compact
-                    etcd_defrag
-                    etcd_disarm_alarm
+                    etcd_reclaim
                     cms_at_last_defrag=$seq
                     refresh_usage
                     size=$CURRENT_SIZE
@@ -663,9 +669,7 @@ cmd_fill() {
 
             if [[ $((seq - cms_at_last_defrag)) -ge $DEFRAG_INTERVAL ]]; then
                 printf "Periodic defrag (%d CMs since last)...\n" $((seq - cms_at_last_defrag))
-                etcd_compact
-                etcd_defrag
-                etcd_disarm_alarm
+                etcd_reclaim
                 cms_at_last_defrag=$seq
             fi
 
@@ -681,12 +685,7 @@ cmd_fill() {
 
         echo ""
         echo "Consolidation defrag..."
-        etcd_compact
-        etcd_defrag
-        etcd_disarm_alarm
-        refresh_usage
-        size=$CURRENT_SIZE
-        usage=$CURRENT_USAGE
+        defrag_and_refresh
         printf "After consolidation: %s%%\n" "$usage"
 
         if usage_ge "$usage" "$target"; then
@@ -767,12 +766,7 @@ cmd_drain() {
             fi
 
             echo "Compacting and defragmenting first..."
-            etcd_compact
-            etcd_defrag
-            etcd_disarm_alarm
-            refresh_usage
-            size=$CURRENT_SIZE
-            usage=$CURRENT_USAGE
+            defrag_and_refresh
             printf "After defrag: %s%%\n" "$usage"
             echo ""
 
@@ -961,9 +955,7 @@ cmd_cleanup() {
     kubectl delete configmaps -n "$NAMESPACE" -l "$LABEL" --wait=true 2>/dev/null || true
 
     echo "Running compaction and defragmentation..."
-    etcd_compact
-    etcd_defrag
-    etcd_disarm_alarm
+    etcd_reclaim
 
     echo "Deleting namespace..."
     kubectl delete namespace "$NAMESPACE" --wait=true 2>/dev/null || true
