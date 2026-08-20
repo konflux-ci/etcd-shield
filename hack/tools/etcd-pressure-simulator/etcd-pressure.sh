@@ -258,12 +258,19 @@ etcd_disarm_alarm() {
     fi
 }
 
+# Reclaim etcd space: compact history, defragment, then clear any
+# NOSPACE alarm the compaction/defrag may have left armed. These three
+# always run together (except in the drain loop, where the safety-floor
+# prediction deliberately sits between compact and defrag).
 etcd_reclaim() {
     etcd_compact
     etcd_defrag
     etcd_disarm_alarm
 }
 
+# etcd_reclaim followed by a fresh usage sample. Updates the caller's
+# `size` and `usage` locals in place (via dynamic scope) from the newly
+# sampled CURRENT_SIZE / CURRENT_USAGE, so callers can keep using them.
 defrag_and_refresh() {
     etcd_reclaim
     refresh_usage
