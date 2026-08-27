@@ -19,7 +19,7 @@ description: Use when building the binary or container image, running linters, o
 
 ## golangci-lint Setup
 
-golangci-lint is **not installed globally** — it's pinned in `hack/tools/golang-ci/go.mod` (currently v2.10.1) and invoked via `go run -modfile`:
+golangci-lint is **not installed globally** — it's pinned in `hack/tools/golang-ci/go.mod` (currently v2.13.1) and invoked via `go run -modfile`:
 
 ```bash
 go run -modfile hack/tools/golang-ci/go.mod \

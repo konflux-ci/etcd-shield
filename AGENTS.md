@@ -50,7 +50,7 @@ Kubernetes admission webhook that blocks Tekton PipelineRun creation when etcd s
 - Go lint (`make lint`) must pass before changes are accepted.
 - All changes via PR.
 - Tests use **Ginkgo v2 + Gomega** BDD framework.
-- golangci-lint version is pinned in `hack/tools/golang-ci/go.mod` (currently v2.10.1).
+- golangci-lint version is pinned in `hack/tools/golang-ci/go.mod` (currently v2.13.1).
 - Dockerfile uses `CGO_ENABLED=0` for a static binary, runs as non-root (UID 65532).
 - Coverage is collected for both unit tests (codecov) and e2e tests (coverport).
 
