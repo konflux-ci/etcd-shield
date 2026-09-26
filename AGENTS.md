@@ -61,7 +61,8 @@ Kubernetes admission webhook that blocks Tekton PipelineRun creation when etcd s
 - The `main` binary in the repo root is a build artifact that should not be committed (listed in `.gitignore`).
 - `.yamllint.yaml` ignores `.tekton/` and allows 120-char lines.
 
-See `skills/` for detailed guides:
-- `running-tests/` — unit tests, e2e tests, coverage, Chainsaw
-- `building-and-linting/` — local build, golangci-lint setup, Dockerfile
-- `ci-cd-quirks/` — Tekton pipelines, GitHub Actions, Renovate config
+## Skills
+
+- When building binary/image, running linters (Go/YAML), or working with Dockerfile, read `skills/building-and-linting/`.
+- When working with Tekton pipelines, GitHub Actions, Renovate config, or interpreting CI results, read `skills/ci-cd-quirks/`.
+- When running unit tests, e2e tests, Chainsaw tests, or working with test coverage, read `skills/running-tests/`.
