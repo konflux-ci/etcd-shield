@@ -26,5 +26,8 @@ go.work.sum
 bin
 out
 
-# Per-user Claude settings (not tracked)
-.claude/settings.local.json
+# Agent security
+.claude
+.cursor
+.vscode
+.agents
